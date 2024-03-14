@@ -1,21 +1,27 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 
-// Endpoint to get all usernames
 router.get('/usernames', (req, res) => {
-    let usernames = req.users.map(user => ({ id: user.id, username: user.username }));
+    let usernames = req.users.map(function(user) {
+        return {id: user.id, username: user.username};
+    });
     res.send(usernames);
 });
 
-// Endpoint to get a specific user by username
 router.get('/username/:name', (req, res) => {
-    const { name } = req.params;
-    const user = req.users.find(user => user.username === name);
-    if (user) {
-        res.json({ email: user.email });
-    } else {
-        res.status(404).json({ error: "User not found" });
+    let name = req.params.name;
+    let users_with_name = req.users.filter(function(user) {
+        return user.username === name;
+    });
+    console.log(users_with_name);
+    if(users_with_name.length === 0) {
+        res.send({
+        error: {message: `${name} not found`, status: 404}
+        });
+    }
+    else {
+        res.send(users_with_name);
     }
 });
 
-module.exports = router;
+module.exports = router
